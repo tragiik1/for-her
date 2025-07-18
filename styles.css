@@ -1,0 +1,767 @@
+/* ========================================
+   CUSTOM FONT DECLARATIONS
+   ======================================== */
+@font-face {
+    font-family: 'Klop';
+    src: url('fonts/Klop-Regular.otf') format('opentype'),
+         url('fonts/Klop-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ========================================
+   RESET AND BASE STYLES
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ========================================
+   BODY AND MAIN LAYOUT
+   ======================================== */
+body {
+    font-family: 'Klop', 'Quicksand', 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #ffe6f2, #ffb3d9, #ff99cc);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   MAIN CONTAINER STYLES
+   ======================================== */
+.container {
+    text-align: center;
+    max-width: 800px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3);
+    border: 3px solid #ffb3d9;
+    position: relative;
+}
+
+/* ========================================
+   DECORATIVE ANIMALS (BUNNY AND CAT)
+   ======================================== */
+.container::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 100px;
+    height: 100px;
+    background-image: url('images/bunny.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: bounce 2s infinite;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -10px;
+    width: 100px;
+    height: 100px;
+    background-image: url('images/cat.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: bounceCat 2s infinite 0.5s;
+    transform: scaleX(-1);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@keyframes bounceCat {
+    0%, 20%, 50%, 80%, 100% { transform: scaleX(-1) translateY(0); }
+    40% { transform: scaleX(-1) translateY(-10px); }
+    60% { transform: scaleX(-1) translateY(-5px); }
+}
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+h1, h2 {
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    color: #ff69b4;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+/* ========================================
+   SCREEN VISIBILITY CONTROL
+   ======================================== */
+.welcome-screen {
+    display: block;
+}
+
+.game-screen {
+    display: none;
+}
+
+.puzzle-screen {
+    display: none;
+}
+
+.final-message {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+.btn {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 10px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    font-weight: normal;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+}
+
+/* ========================================
+   GAME AREA STYLES
+   ======================================== */
+.game-area {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 182, 193, 0.2);
+    border-radius: 15px;
+    border: 2px dashed #ff69b4;
+}
+
+/* ========================================
+   MEMORY GAME STYLES
+   ======================================== */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.memory-card {
+    width: 80px;
+    height: 80px;
+    background: #ffb3d9;
+    border: 2px solid #ff69b4;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    transition: all 0.3s ease;
+}
+
+.memory-card.flipped {
+    background: white;
+    transform: rotateY(180deg);
+}
+
+/* ========================================
+   PUZZLE GAME STYLES (LEGACY - CAN BE REMOVED)
+   ======================================== */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.puzzle-piece {
+    width: 90px;
+    height: 90px;
+    background: #ffb3d9;
+    border: 2px solid #ff69b4;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    transition: all 0.3s ease;
+}
+
+.puzzle-piece:hover {
+    background: #ff99cc;
+}
+
+/* ========================================
+   QUIZ GAME STYLES
+   ======================================== */
+.quiz-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.question {
+    text-align: center;
+}
+
+.question h3 {
+    color: #ff1493;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.question p {
+    font-size: 1.3em;
+    color: #ff69b4;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.quiz-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.quiz-btn {
+    background: linear-gradient(45deg, #ffb3d9, #ff99cc);
+    color: white;
+    border: 2px solid #ff69b4;
+    padding: 15px 20px;
+    font-size: 1.1em;
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    font-weight: normal;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.2);
+}
+
+.quiz-btn:hover {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+}
+
+.quiz-btn.correct {
+    background: linear-gradient(45deg, #90EE90, #32CD32);
+    border-color: #228B22;
+    transform: scale(1.05);
+}
+
+.quiz-btn.incorrect {
+    background: #e53935 !important;
+    color: #fff !important;
+    border: 2px solid #b71c1c !important;
+    box-shadow: 0 0 0 2px #ffb3b3;
+}
+
+/* ========================================
+   CAT CATCHING GAME STYLES
+   ======================================== */
+.cat-game {
+    position: relative;
+    height: 300px;
+    background: #fff; /* White background */
+    border-radius: 15px;
+    overflow: hidden;
+    border: 3px solid #ff69b4;
+    /* Remove flex centering here */
+}
+
+.cat-start {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+}
+
+.cat-start h3 {
+    color: #ff69b4;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.cat-start p {
+    color: #ff69b4;
+    font-size: 1.2em;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.cat-countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    padding: 0;
+    /* Remove width, height, background */
+}
+
+.cat-countdown h3 {
+    color: #ff69b4;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.cat-game-area {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    min-height: 250px;
+    padding: 10px;
+    background: transparent;
+}
+
+.cat {
+    position: absolute;
+    font-size: 2em; /* Smaller cats (was 3em) */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.cat:hover {
+    transform: scale(1.2);
+}
+
+/* ========================================
+   DIFFICULTY PROMPT STYLES
+   ======================================== */
+.difficulty-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   PATTERN MEMORY GAME STYLES
+   ======================================== */
+.pattern-game {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.pattern-start {
+    text-align: center;
+    padding: 20px;
+}
+
+.pattern-start h3 {
+    color: #ff1493;
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.pattern-start p {
+    font-size: 1.2em;
+    color: #ff69b4;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.pattern-countdown {
+    text-align: center;
+    padding: 20px;
+}
+
+.pattern-countdown h3 {
+    color: #ff1493;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.countdown-number {
+    font-size: 4em;
+    color: #ff69b4;
+    font-weight: bold;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.pattern-cell {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #ffb3d9, #ff99cc);
+    border: 3px solid #ff69b4;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.pattern-cell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+}
+
+.pattern-cell.active {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    transform: scale(1.2);
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+}
+
+.pattern-cell.correct {
+    background: linear-gradient(45deg, #90EE90, #32CD32);
+    border-color: #228B22;
+}
+
+.pattern-cell.incorrect {
+    background: linear-gradient(45deg, #FFB6C1, #FF69B4);
+    border-color: #DC143C;
+}
+
+/* ========================================
+   PROGRESS BAR STYLES
+   ======================================== */
+.progress {
+    margin: 20px 0;
+    padding: 10px;
+    background: rgba(255, 182, 193, 0.3);
+    border-radius: 10px;
+    border: 2px solid #ff69b4;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #ffb3d9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* ========================================
+   TEXT AND MESSAGE STYLES
+   ======================================== */
+.message {
+    font-size: 1.3em;
+    color: #ff69b4;
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.score {
+    font-size: 1.2em;
+    color: #ff69b4;
+    margin: 10px 0;
+}
+
+.timer {
+    font-size: 1.1em;
+    color: #ff1493;
+    margin: 10px 0;
+}
+
+/* ========================================
+   FINAL MESSAGE STYLES
+   ======================================== */
+.final-message {
+    background: linear-gradient(135deg, #ffe6f2, #ffb3d9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 4px solid #ff69b4;
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+}
+
+.final-message h2 {
+    color: #ff1493;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.final-message p {
+    font-size: 1.4em;
+    color: #ff69b4;
+    line-height: 1.8;
+    margin: 15px 0;
+}
+
+/* ========================================
+   EXPLOSION SECTION STYLES
+   ======================================== */
+.explosion-screen {
+    display: none;
+}
+
+.explosion-area {
+    position: relative;
+    height: 400px;
+    background: linear-gradient(135deg, #ffe6f2, #ffb3d9);
+    border-radius: 20px;
+    border: 3px solid #ff69b4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+
+.fat-cat {
+    font-size: 8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    z-index: 10;
+    position: relative;
+}
+
+.fat-cat:hover {
+    transform: scale(1.05);
+}
+
+@keyframes catBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes clickConfettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(180deg);
+    }
+}
+
+@keyframes explosionConfettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg);
+    }
+}
+
+/* ========================================
+   FLOATING HEARTS ANIMATION
+   ======================================== */
+.hearts {
+    position: absolute;
+    font-size: 1.5em;
+    color: #ff69b4;
+    pointer-events: none;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN (FOR MOBILE DEVICES)
+   ======================================== */
+@media (max-width: 768px) {
+    .container {
+        max-width: 95%;
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    .memory-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 300px;
+    }
+    
+    .memory-card {
+        width: 70px;
+        height: 70px;
+        font-size: 1.5em;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        font-size: 1em;
+    }
+}
+
+/* ========================================
+   DEV MODE PANEL STYLES
+   ======================================== */
+.dev-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #ff69b4;
+    z-index: 1000;
+    max-width: 400px;
+    text-align: center;
+}
+
+.dev-panel h3 {
+    color: #ff69b4;
+    margin-bottom: 15px;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.dev-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.dev-btn {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9em;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.dev-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+}
+
+/* ========================================
+   ACCESSIBILITY IMPROVEMENTS
+   ======================================== */
+.btn:focus {
+    outline: 3px solid #ff1493;
+    outline-offset: 2px;
+}
+
+.memory-card:focus,
+.hidden-heart:focus,
+.cat:focus,
+.bunny:focus {
+    outline: 2px solid #ff1493;
+    outline-offset: 1px;
+} 
+
+#volume-slider {
+  accent-color: #ff69b4;
+  width: 80px;
+  border: none;
+  box-shadow: none;
+  background: none;
+  outline: none;
+}
+#volume-slider::-webkit-slider-thumb {
+  border: none;
+  box-shadow: none;
+}
+#volume-slider::-webkit-slider-runnable-track {
+  border: none;
+  box-shadow: none;
+  background: #ffd1ea;
+  border-radius: 999px;
+}
+#volume-slider::-moz-range-thumb {
+  border: none;
+  box-shadow: none;
+}
+#volume-slider::-moz-range-track {
+  border: none;
+  box-shadow: none;
+  background: #ffd1ea;
+  border-radius: 999px;
+}
+#volume-slider::-ms-thumb {
+  border: none;
+  box-shadow: none;
+}
+#volume-slider::-ms-fill-lower,
+#volume-slider::-ms-fill-upper {
+  border: none;
+  box-shadow: none;
+  background: #ffd1ea;
+  border-radius: 999px;
+} 
