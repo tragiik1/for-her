@@ -108,9 +108,9 @@
     <div class="container">
         <!-- Welcome Screen -->
         <div id="welcome" class="welcome-screen">
-            <h1>Welcome Nini! :D</h1>
+            <h1>welcome nini! :D</h1>
             <div class="message">
-                <p>Hello beautiful</p>
+                <p>hi pretty girl &lt;3</p>
                 <p>I've created some cute little games and puzzles just for you!</p>
                 <p>Complete them all to discover a special message...</p>
             </div>
@@ -314,16 +314,27 @@
             iconSound.className = 'bx bx-volume-full';
           }
         }
-        // Autoplay fix: play on first user interaction
-        function unlockAudio() {
-          if (audio && audio.paused) {
+        // --- Combined unlock for both music and beep audio context ---
+        function unlockAllAudio() {
+          // Resume beep audio context if needed
+          if (window.audioCtx && window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume();
+          }
+          // Play and resume background music if needed
+          var audio = document.getElementById('bg-music');
+          var slider = document.getElementById('volume-slider');
+          if (audio) {
+            audio.muted = false;
+            audio.volume = slider.value;
             audio.play().catch(()=>{});
           }
-          window.removeEventListener('click', unlockAudio);
-          window.removeEventListener('keydown', unlockAudio);
+          window.removeEventListener('click', unlockAllAudio);
+          window.removeEventListener('keydown', unlockAllAudio);
+          window._audioUnlocked = true;
         }
-        window.addEventListener('click', unlockAudio);
-        window.addEventListener('keydown', unlockAudio);
+        window._audioUnlocked = false;
+        window.addEventListener('click', unlockAllAudio);
+        window.addEventListener('keydown', unlockAllAudio);
       });
     </script>
     <script>
@@ -896,6 +907,10 @@
         }
 
         function startPatternGame() {
+            // Unlock audio if not already done
+            if (!window._audioUnlocked) {
+                unlockAllAudio();
+            }
             // Hide start screen, show countdown
             document.getElementById('patternStart').style.display = 'none';
             document.getElementById('patternCountdown').style.display = 'block';
@@ -970,10 +985,13 @@
 
         function showPattern(index) {
             if (index >= patternSequence.length) {
-                isShowingPattern = false;
-                isPlayerTurn = true;
-                playerSequence = [];
-                console.log('Pattern shown, now player turn');
+                // Instead of immediately enabling player turn, wait for the last highlight to finish
+                setTimeout(() => {
+                    isShowingPattern = false;
+                    isPlayerTurn = true;
+                    playerSequence = [];
+                    console.log('Pattern shown, now player turn');
+                }, 300); // matches the delay after last cell highlight
                 return;
             }
             
