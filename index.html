@@ -1214,7 +1214,11 @@
                 voiceCurrent.textContent = formatTime(voiceAudio.currentTime);
                 // Change to restart icon if at end
                 if (voiceAudio.currentTime >= voiceAudio.duration - 0.1) {
+                    // Try bx-replay, fallback to bx-refresh if not visible
                     voicePlayIcon.className = 'bx bx-replay';
+                    if (!voicePlayIcon.offsetHeight || voicePlayIcon.offsetHeight === 0) {
+                        voicePlayIcon.className = 'bx bx-refresh';
+                    }
                 } else if (voiceAudio.paused) {
                     voicePlayIcon.className = 'bx bx-play';
                 } else {
@@ -1228,6 +1232,9 @@
             // Reset icon on ended
             voiceAudio.addEventListener('ended', function() {
                 voicePlayIcon.className = 'bx bx-replay';
+                if (!voicePlayIcon.offsetHeight || voicePlayIcon.offsetHeight === 0) {
+                    voicePlayIcon.className = 'bx bx-refresh';
+                }
             });
         }
         function toggleVoicePlayback() {
