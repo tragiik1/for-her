@@ -229,20 +229,48 @@
             <button class="btn" onclick="showHint('pattern')">Need a Hint? 💡</button>
         </div>
 
-        <!-- Final Message -->
-        <div id="final" class="final-message">
-            <h2>You Did It!</h2>
-            <p>hi, congrats — you made it! 🎉</p>
-            <p>i just wanted to say… thank you.</p>
-            <p>for everything. for being here, for putting up with me, for always loving me even when i make things difficult.</p>
-            <p>i know i’ve caused some trouble along the way, and i’m really sorry for that. you never deserved the stress,</p>
-            <p>but you still stayed — and that means the world to me.</p>
-            <p>and as a tiny thank-you, there’s a $50 steam card waiting for you on wednesday when i get paid 💖</p>
-            <p>you’re amazing, and you deserve so much more than this.</p>
-            <p>i love you always,</p>
-            <p>– noah</p>
-            <div style="font-size: 2em; margin: 20px 0;">
-                🐰💕🐱💕🐰💕🐱💕🐰
+        <!-- Final Message Book -->
+        <div id="final" class="final-message book-message" style="display:none;">
+            <div class="book-nav book-nav-left" id="bookPrev" style="display:none;" onclick="bookPrevPage()">
+                <i class='bx bx-chevron-left'></i>
+            </div>
+            <div class="book-pages">
+                <!-- Page 1: Main message -->
+                <div class="book-page" id="bookPage0">
+                    <h2>You Did It!</h2>
+                    <p>hi, congrats — you made it! 🎉</p>
+                    <p>i just wanted to say… thank you.</p>
+                    <p>for everything. for being here, for putting up with me, for always loving me even when i make things difficult.</p>
+                    <p>i know i’ve caused some trouble along the way, and i’m really sorry for that. you never deserved the stress,</p>
+                    <p>but you still stayed — and that means the world to me.</p>
+                    <p>and as a tiny thank-you, there’s a $50 steam card waiting for you on wednesday when i get paid 💖</p>
+                    <p>you’re amazing, and you deserve so much more than this.</p>
+                    <p>i love you always,</p>
+                    <p>– noah</p>
+                    <div style="font-size: 2em; margin: 20px 0;">
+                        🐰💕🐱💕🐰💕🐱💕🐰
+                    </div>
+                </div>
+                <!-- Page 2: Voice message -->
+                <div class="book-page" id="bookPage1" style="display:none;">
+                    <h2>Voice Message</h2>
+                    <div class="voice-player">
+                        <audio id="voiceAudio" src="audio/voice-message.mp3"></audio>
+                        <button id="voicePlayBtn" class="voice-play-btn" onclick="toggleVoicePlayback()">
+                            <i id="voicePlayIcon" class='bx bx-play'></i>
+                        </button>
+                        <div class="voice-progress-bar">
+                            <input id="voiceProgress" type="range" min="0" max="100" value="0" step="0.1">
+                        </div>
+                        <div class="voice-time">
+                            <span id="voiceCurrent">0:00</span> / <span id="voiceDuration">0:00</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 18px; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1.1em;">(turn up your volume!)</div>
+                </div>
+            </div>
+            <div class="book-nav book-nav-right" id="bookNext" onclick="bookNextPage()">
+                <i class='bx bx-chevron-right'></i>
             </div>
         </div>
 
@@ -1143,7 +1171,90 @@
             }
         });
 
-
+        // Book message navigation and voice player logic
+        let bookCurrentPage = 0;
+        const bookTotalPages = 2; // Update this if you add more pages
+        function showBookPage(page) {
+            for (let i = 0; i < bookTotalPages; i++) {
+                const pg = document.getElementById('bookPage' + i);
+                if (pg) pg.style.display = (i === page) ? 'block' : 'none';
+            }
+            document.getElementById('bookPrev').style.display = (page === 0) ? 'none' : 'flex';
+            document.getElementById('bookNext').style.display = (page === bookTotalPages - 1) ? 'none' : 'flex';
+            bookCurrentPage = page;
+        }
+        function bookPrevPage() { showBookPage(Math.max(0, bookCurrentPage - 1)); }
+        function bookNextPage() { showBookPage(Math.min(bookTotalPages - 1, bookCurrentPage + 1)); }
+        // Show first page on load of final message
+        const origShowGame = showGame;
+        showGame = function(gameId) {
+            origShowGame(gameId);
+            if (gameId === 'final') {
+                showBookPage(0);
+            }
+        }
+        // Voice player logic
+        let voiceAudio, voicePlayBtn, voicePlayIcon, voiceProgress, voiceCurrent, voiceDuration;
+        function setupVoicePlayer() {
+            voiceAudio = document.getElementById('voiceAudio');
+            voicePlayBtn = document.getElementById('voicePlayBtn');
+            voicePlayIcon = document.getElementById('voicePlayIcon');
+            voiceProgress = document.getElementById('voiceProgress');
+            voiceCurrent = document.getElementById('voiceCurrent');
+            voiceDuration = document.getElementById('voiceDuration');
+            if (!voiceAudio) return;
+            // Update duration when loaded
+            voiceAudio.addEventListener('loadedmetadata', function() {
+                voiceDuration.textContent = formatTime(voiceAudio.duration);
+                voiceProgress.max = voiceAudio.duration;
+            });
+            // Update progress bar and time
+            voiceAudio.addEventListener('timeupdate', function() {
+                voiceProgress.value = voiceAudio.currentTime;
+                voiceCurrent.textContent = formatTime(voiceAudio.currentTime);
+                // Change to restart icon if at end
+                if (voiceAudio.currentTime >= voiceAudio.duration - 0.1) {
+                    voicePlayIcon.className = 'bx bx-replay';
+                } else if (voiceAudio.paused) {
+                    voicePlayIcon.className = 'bx bx-play';
+                } else {
+                    voicePlayIcon.className = 'bx bx-pause';
+                }
+            });
+            // Seek
+            voiceProgress.addEventListener('input', function() {
+                voiceAudio.currentTime = voiceProgress.value;
+            });
+            // Reset icon on ended
+            voiceAudio.addEventListener('ended', function() {
+                voicePlayIcon.className = 'bx bx-replay';
+            });
+        }
+        function toggleVoicePlayback() {
+            if (!voiceAudio) return;
+            if (voiceAudio.currentTime >= voiceAudio.duration - 0.1) {
+                voiceAudio.currentTime = 0;
+                voiceAudio.play();
+                voicePlayIcon.className = 'bx bx-pause';
+            } else if (voiceAudio.paused) {
+                voiceAudio.play();
+                voicePlayIcon.className = 'bx bx-pause';
+            } else {
+                voiceAudio.pause();
+                voicePlayIcon.className = 'bx bx-play';
+            }
+        }
+        function formatTime(sec) {
+            sec = Math.floor(sec);
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+        // Setup on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setupVoicePlayer();
+        });
     </script>
 </body>
 </html>
+
