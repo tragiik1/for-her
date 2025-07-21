@@ -302,7 +302,7 @@
     </div>
 
     <!-- Background Music Player -->
-    <audio id="bg-music" src="audio/background.mp3" autoplay loop></audio>
+    <audio id="bg-music" src="audio/background2.mp3" autoplay loop></audio>
     <audio id="pop-sound" src="audio/pop.mp3" preload="auto"></audio>
     <audio id="drumroll-sound" src="audio/drumroll.mp3" preload="auto"></audio>
     <div id="audio-controls">
@@ -310,11 +310,13 @@
         <i id="icon-sound" class='bx bx-volume-full'></i>
       </button>
       <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.15">
+      <button id="shuffle-btn" aria-label="Shuffle" style="background: #ffe6f2; border: 2px solid #ffb3d9; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-left: 8px; cursor: pointer;"><i id="icon-shuffle" class='bx bx-shuffle'></i></button>
+      <button id="loop-btn" aria-label="Loop" style="background: #ffe6f2; border: 2px solid #ffb3d9; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-left: 6px; cursor: pointer;"><i id="icon-loop" class='bx bx-repeat'></i></button>
       <select id="music-select" aria-label="Choose background music" style="border-radius: 12px; border: 2px solid #ffb3d9; background: #ffe6f2; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1em; margin-left: 10px; padding: 0 12px; line-height: 32px; height: 32px; display: inline-block; vertical-align: middle;">
         <option value="off">Off</option>
-        <option value="background.mp3">Track 1</option>
-        <option value="background2.mp3">Track 2</option>
-        <option value="background3.mp3">Track 3</option>
+        <option value="background.mp3">Cute Vibes</option>
+        <option value="background2.mp3">Soft & Sad</option>
+        <option value="background3.mp3">Barista Lofi</option>
       </select>
     </div>
     <script>
@@ -324,56 +326,130 @@
         var slider = document.getElementById('volume-slider');
         var iconSound = document.getElementById('icon-sound');
         var musicSelect = document.getElementById('music-select');
-        if (musicSelect) {
-          musicSelect.value = 'background.mp3'; // Always default to Track 1
+        var shuffleBtn = document.getElementById('shuffle-btn');
+        var loopBtn = document.getElementById('loop-btn');
+        var iconShuffle = document.getElementById('icon-shuffle');
+        var iconLoop = document.getElementById('icon-loop');
+        // Track list (update if you add more tracks)
+        var tracks = [
+          'background.mp3',
+          'background2.mp3',
+          'background3.mp3'
+        ];
+        // State
+        var shuffleOn = false;
+        var loopMode = 0; // 0 = off, 1 = loop all, 2 = loop one
+        // Set default UI states
+        function updateShuffleUI() {
+          if (shuffleOn) {
+            shuffleBtn.style.background = '#ffb3d9';
+            iconShuffle.style.color = '#fff';
+          } else {
+            shuffleBtn.style.background = '#ffe6f2';
+            iconShuffle.style.color = '#ff69b4';
+          }
         }
-        if (audio) {
-          audio.volume = slider.value;
-          // Mute/unmute
-          muteBtn.addEventListener('click', function() {
-            audio.muted = !audio.muted;
-            if (audio.muted) {
-              iconSound.className = 'bx bx-volume-mute';
-            } else {
-              iconSound.className = 'bx bx-volume-full';
+        function updateLoopUI() {
+          if (loopMode === 1) {
+            loopBtn.style.background = '#ffb3d9';
+            iconLoop.className = 'bx bx-repeat';
+            iconLoop.style.color = '#fff';
+          } else if (loopMode === 2) {
+            loopBtn.style.background = '#ff69b4';
+            iconLoop.className = 'bx bx-repeat-one';
+            iconLoop.style.color = '#fff';
+          } else {
+            loopBtn.style.background = '#ffe6f2';
+            iconLoop.className = 'bx bx-repeat';
+            iconLoop.style.color = '#ff69b4';
+          }
+        }
+        updateShuffleUI();
+        updateLoopUI();
+        // Shuffle button
+        shuffleBtn.addEventListener('click', function() {
+          shuffleOn = !shuffleOn;
+          updateShuffleUI();
+        });
+        // Loop button
+        loopBtn.addEventListener('click', function() {
+          loopMode = (loopMode + 1) % 3;
+          updateLoopUI();
+        });
+        // Music selector
+        musicSelect.value = 'background2.mp3'; // Always default to Soft & Sad
+        musicSelect.addEventListener('change', function() {
+          var wasPlaying = !audio.paused;
+          var prevVolume = audio.volume;
+          var prevMuted = audio.muted;
+          if (musicSelect.value === 'off') {
+            audio.pause();
+            audio.muted = true;
+          } else {
+            audio.src = 'audio/' + musicSelect.value;
+            audio.load();
+            audio.volume = prevVolume;
+            audio.muted = prevMuted;
+            if (wasPlaying && !audio.muted) {
+              audio.play().catch(()=>{});
             }
-          });
-          // Volume slider
-          slider.addEventListener('input', function() {
-            audio.volume = slider.value;
-            if (audio.volume == 0) {
-              audio.muted = true;
-              iconSound.className = 'bx bx-volume-mute';
-            } else {
-              audio.muted = false;
-              iconSound.className = 'bx bx-volume-full';
-            }
-          });
-          // Music selector
-          musicSelect.addEventListener('change', function() {
-            var wasPlaying = !audio.paused;
-            var currentTime = 0; // always start new track from beginning
-            var prevVolume = audio.volume;
-            var prevMuted = audio.muted;
-            if (musicSelect.value === 'off') {
-              audio.pause();
-              audio.muted = true;
-            } else {
-              audio.src = 'audio/' + musicSelect.value;
-              audio.load();
-              audio.volume = prevVolume;
-              audio.muted = prevMuted;
-              if (wasPlaying && !audio.muted) {
-                audio.play().catch(()=>{});
-              }
-            }
-          });
-          // Set initial icon
-          if (audio.muted || audio.volume == 0) {
+          }
+        });
+        // Track end logic
+        audio.addEventListener('ended', function() {
+          if (musicSelect.value === 'off') return;
+          if (loopMode === 2) {
+            // Loop one
+            audio.currentTime = 0;
+            audio.play();
+          } else if (shuffleOn) {
+            // Shuffle (pick a random track, not the current one)
+            var current = musicSelect.value;
+            var available = tracks.filter(function(t) { return t !== current; });
+            var next = available[Math.floor(Math.random() * available.length)];
+            musicSelect.value = next;
+            audio.src = 'audio/' + next;
+            audio.load();
+            audio.play();
+          } else if (loopMode === 1) {
+            // Loop all
+            var idx = tracks.indexOf(musicSelect.value);
+            var nextIdx = (idx + 1) % tracks.length;
+            var next = tracks[nextIdx];
+            musicSelect.value = next;
+            audio.src = 'audio/' + next;
+            audio.load();
+            audio.play();
+          } else {
+            // No loop, no shuffle: stop
+            // Do nothing
+          }
+        });
+        // Mute/unmute
+        muteBtn.addEventListener('click', function() {
+          audio.muted = !audio.muted;
+          if (audio.muted) {
             iconSound.className = 'bx bx-volume-mute';
           } else {
             iconSound.className = 'bx bx-volume-full';
           }
+        });
+        // Volume slider
+        slider.addEventListener('input', function() {
+          audio.volume = slider.value;
+          if (audio.volume == 0) {
+            audio.muted = true;
+            iconSound.className = 'bx bx-volume-mute';
+          } else {
+            audio.muted = false;
+            iconSound.className = 'bx bx-volume-full';
+          }
+        });
+        // Set initial icon
+        if (audio.muted || audio.volume == 0) {
+          iconSound.className = 'bx bx-volume-mute';
+        } else {
+          iconSound.className = 'bx bx-volume-full';
         }
         // --- Combined unlock for both music and beep audio context ---
         function unlockAllAudio() {
