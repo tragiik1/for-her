@@ -106,6 +106,7 @@
 </head>
 <body>
     <div class="container">
+      <button id="cat-purr-btn" aria-label="Pet the cat!" style="position: absolute; top: -20px; right: -10px; width: 100px; height: 100px; background: transparent; border: none; cursor: pointer; z-index: 30; outline: none;"></button>
         <!-- Welcome Screen -->
         <div id="welcome" class="welcome-screen">
             <h1>welcome nini! :D</h1>
@@ -305,13 +306,17 @@
     <audio id="bg-music" src="audio/background2.mp3" autoplay loop></audio>
     <audio id="pop-sound" src="audio/pop.mp3" preload="auto"></audio>
     <audio id="drumroll-sound" src="audio/drumroll.mp3" preload="auto"></audio>
+    <audio id="purr-sound" src="audio/purr.mp3" preload="auto"></audio>
     <div id="audio-controls">
       <button id="mute-btn" aria-label="Mute/Unmute">
         <i id="icon-sound" class='bx bx-volume-full'></i>
       </button>
       <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.15">
       <button id="shuffle-btn" aria-label="Shuffle" style="background: #ffe6f2; border: 2px solid #ffb3d9; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-left: 8px; cursor: pointer;"><i id="icon-shuffle" class='bx bx-shuffle'></i></button>
-      <button id="loop-btn" aria-label="Loop" style="background: #ffe6f2; border: 2px solid #ffb3d9; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-left: 6px; cursor: pointer;"><i id="icon-loop" class='bx bx-repeat'></i></button>
+      <button id="loop-btn" aria-label="Loop" style="background: #ffe6f2; border: 2px solid #ffb3d9; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-left: 6px; cursor: pointer; position: relative;">
+        <i id="icon-loop" class='bx bx-repeat'></i>
+        <span id="loop-badge" style="display:none; position:absolute; top:2px; right:2px; background:#fff; color:#ff69b4; font-size:0.7em; border-radius:50%; width:13px; height:13px; display:block; align-items:center; justify-content:center; font-family:'Klop','Fredoka',sans-serif; font-weight:bold; box-shadow:0 1px 4px rgba(255,105,180,0.10); pointer-events:none; text-align:center; line-height:13px;">1</span>
+      </button>
       <select id="music-select" aria-label="Choose background music" style="border-radius: 12px; border: 2px solid #ffb3d9; background: #ffe6f2; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1em; margin-left: 10px; padding: 0 12px; line-height: 32px; height: 32px; display: inline-block; vertical-align: middle;">
         <option value="off">Off</option>
         <option value="background.mp3">Cute Vibes</option>
@@ -330,6 +335,7 @@
         var loopBtn = document.getElementById('loop-btn');
         var iconShuffle = document.getElementById('icon-shuffle');
         var iconLoop = document.getElementById('icon-loop');
+        var loopBadge = document.getElementById('loop-badge');
         // Track list (update if you add more tracks)
         var tracks = [
           'background.mp3',
@@ -354,14 +360,17 @@
             loopBtn.style.background = '#ffb3d9';
             iconLoop.className = 'bx bx-repeat';
             iconLoop.style.color = '#fff';
+            loopBadge.style.display = 'none';
           } else if (loopMode === 2) {
             loopBtn.style.background = '#ff69b4';
             iconLoop.className = 'bx bx-repeat-one';
             iconLoop.style.color = '#fff';
+            loopBadge.style.display = 'flex';
           } else {
             loopBtn.style.background = '#ffe6f2';
             iconLoop.className = 'bx bx-repeat';
             iconLoop.style.color = '#ff69b4';
+            loopBadge.style.display = 'none';
           }
         }
         updateShuffleUI();
@@ -472,6 +481,17 @@
         window._audioUnlocked = false;
         window.addEventListener('click', unlockAllAudio);
         window.addEventListener('keydown', unlockAllAudio);
+
+        var catPurrBtn = document.getElementById('cat-purr-btn');
+        var purrSound = document.getElementById('purr-sound');
+        if (catPurrBtn && purrSound) {
+          catPurrBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            purrSound.currentTime = 0;
+            purrSound.volume = 0.5;
+            purrSound.play();
+          });
+        }
       });
     </script>
     <script>
