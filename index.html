@@ -269,6 +269,7 @@
                     <div style="margin-top: 18px; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1.1em;">(turn up your volume!)</div>
                 </div>
             </div>
+            <div id="bookPageIndicator" style="margin: 18px auto 0 auto; text-align: center; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1.1em;">Page 1/2</div>
             <div class="book-nav book-nav-right" id="bookNext" onclick="bookNextPage()">
                 <i class='bx bx-chevron-right'></i>
             </div>
@@ -309,6 +310,12 @@
         <i id="icon-sound" class='bx bx-volume-full'></i>
       </button>
       <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.15">
+      <select id="music-select" aria-label="Choose background music" style="border-radius: 12px; border: 2px solid #ffb3d9; background: #ffe6f2; color: #ff69b4; font-family: 'Klop', 'Fredoka', 'Comic Sans MS', cursive, sans-serif; font-size: 1em; margin-left: 10px; padding: 0 12px; line-height: 32px; height: 32px; display: inline-block; vertical-align: middle;">
+        <option value="off">Off</option>
+        <option value="background.mp3">Track 1</option>
+        <option value="background2.mp3">Track 2</option>
+        <option value="background3.mp3">Track 3</option>
+      </select>
     </div>
     <script>
       window.addEventListener('DOMContentLoaded', function() {
@@ -316,6 +323,10 @@
         var muteBtn = document.getElementById('mute-btn');
         var slider = document.getElementById('volume-slider');
         var iconSound = document.getElementById('icon-sound');
+        var musicSelect = document.getElementById('music-select');
+        if (musicSelect) {
+          musicSelect.value = 'background.mp3'; // Always default to Track 1
+        }
         if (audio) {
           audio.volume = slider.value;
           // Mute/unmute
@@ -336,6 +347,25 @@
             } else {
               audio.muted = false;
               iconSound.className = 'bx bx-volume-full';
+            }
+          });
+          // Music selector
+          musicSelect.addEventListener('change', function() {
+            var wasPlaying = !audio.paused;
+            var currentTime = 0; // always start new track from beginning
+            var prevVolume = audio.volume;
+            var prevMuted = audio.muted;
+            if (musicSelect.value === 'off') {
+              audio.pause();
+              audio.muted = true;
+            } else {
+              audio.src = 'audio/' + musicSelect.value;
+              audio.load();
+              audio.volume = prevVolume;
+              audio.muted = prevMuted;
+              if (wasPlaying && !audio.muted) {
+                audio.play().catch(()=>{});
+              }
             }
           });
           // Set initial icon
@@ -841,6 +871,7 @@
                 }, 100);
                 // Play drumroll and fade music
                 if (drumroll && bgMusic) {
+                    drumroll.volume = 0.2; // Always play at lower volume
                     fadeAudio(bgMusic, 0, 1000);
                     drumroll.pause();
                     drumroll.currentTime = 0;
@@ -853,6 +884,7 @@
                         drumroll.onended = null;
                     };
                 } else if (drumroll) {
+                    drumroll.volume = 0.2; // Always play at lower volume
                     drumroll.pause();
                     drumroll.currentTime = 0;
                     drumroll.load();
@@ -992,10 +1024,10 @@
                 cell.addEventListener('click', () => handlePatternClick(cell));
             });
             
-            // Start the first round
-            setTimeout(() => {
-                generatePattern();
-            }, 1000);
+            // Make sure the pattern grid is visible
+            document.getElementById('patternGrid').style.display = 'grid';
+            // Start the first round immediately
+            generatePattern();
         }
 
         function generatePattern() {
@@ -1022,7 +1054,7 @@
                     isPlayerTurn = true;
                     playerSequence = [];
                     console.log('Pattern shown, now player turn');
-                }, 300); // matches the delay after last cell highlight
+                }, 180); // was 300, now faster
                 return;
             }
             
@@ -1040,8 +1072,8 @@
                 }
                 setTimeout(() => {
                     showPattern(index + 1);
-                }, 300);
-            }, 500);
+                }, 120); // was 300, now faster
+            }, 260); // was 500, now faster
         }
 
         function handlePatternClick(cell) {
@@ -1096,8 +1128,8 @@
                 document.getElementById('patternLevel').textContent = patternLevel;
                 document.getElementById('patternScore').textContent = patternScore;
                 
-                // Check if they've reached the goal (level 5)
-                if (patternLevel > 5) {
+                // Check if they've reached the goal (level 7)
+                if (patternLevel > 7) {
                     setTimeout(() => {
                         alert('Incredible! Your memory is absolutely amazing! You\'re a pattern master!');
                         currentGame = 5;
@@ -1182,6 +1214,11 @@
             document.getElementById('bookPrev').style.display = (page === 0) ? 'none' : 'flex';
             document.getElementById('bookNext').style.display = (page === bookTotalPages - 1) ? 'none' : 'flex';
             bookCurrentPage = page;
+            // Update page indicator
+            const indicator = document.getElementById('bookPageIndicator');
+            if (indicator) {
+                indicator.textContent = `Page ${page + 1}/${bookTotalPages}`;
+            }
         }
         function bookPrevPage() { showBookPage(Math.max(0, bookCurrentPage - 1)); }
         function bookNextPage() { showBookPage(Math.min(bookTotalPages - 1, bookCurrentPage + 1)); }
